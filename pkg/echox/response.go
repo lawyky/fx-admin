@@ -1,6 +1,7 @@
 package echox
 
 import (
+	"github.com/lawyky/fx-admin/constants"
 	"net/http"
 
 	"github.com/lawyky/fx-admin/errors"
@@ -33,7 +34,7 @@ func (a Response) JSON(ctx echo.Context) error {
 
 		a.Message = err.Error()
 	}
-
+	ctx.Set(constants.HttpResponseBody, a)
 	if a.Pretty {
 		return ctx.JSONPretty(a.Code, a, "\t")
 	}

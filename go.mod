@@ -1,6 +1,6 @@
 module github.com/lawyky/fx-admin
 
-go 1.20
+go 1.22
 
 require (
 	github.com/casbin/casbin/v2 v2.30.1

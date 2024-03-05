@@ -1,7 +1,13 @@
 package middlewares
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/lawyky/fx-admin/constants"
+	"io"
+	"net/http"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -31,6 +37,22 @@ func (a ZapMiddleware) core() echo.MiddlewareFunc {
 		return func(ctx echo.Context) error {
 			start := time.Now()
 
+			//reqBody, _ := io.ReadAll(ctx.Request().Body)
+			//body := make(map[string]any)
+			//json.Unmarshal(reqBody, &body)
+			//ctx.Request().Body = io.NopCloser(bytes.NewReader(reqBody))
+
+			body := make(map[string]any)
+			switch ctx.Request().Method {
+			case http.MethodPost, http.MethodPut, http.MethodGet, http.MethodDelete:
+				bf := bytes.NewBuffer(nil)
+				wt := bufio.NewWriter(bf)
+				io.Copy(wt, ctx.Request().Body)
+				rb, _ := io.ReadAll(bf)
+				ctx.Request().Body = io.NopCloser(bytes.NewBuffer(rb))
+				json.Unmarshal(rb, &body)
+			}
+
 			if err := next(ctx); err != nil {
 				logger = logger.With(zap.Error(err))
 				ctx.Error(err)
@@ -38,6 +60,8 @@ func (a ZapMiddleware) core() echo.MiddlewareFunc {
 
 			request := ctx.Request()
 			response := ctx.Response()
+
+			rt := ctx.Get(constants.HttpResponseBody)
 
 			fields := []zapcore.Field{
 				zap.String("remote_ip", ctx.RealIP()),
@@ -47,6 +71,9 @@ func (a ZapMiddleware) core() echo.MiddlewareFunc {
 				zap.Int("status", response.Status),
 				zap.Int64("size", response.Size),
 				zap.String("user_agent", request.UserAgent()),
+				zap.Any("request_header", request.Header),
+				zap.Any("request_body", body),
+				zap.Any("response_body", rt),
 			}
 
 			id := request.Header.Get(echo.HeaderXRequestID)
