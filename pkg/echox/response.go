@@ -41,3 +41,19 @@ func (a Response) JSON(ctx echo.Context) error {
 
 	return ctx.JSON(a.Code, a)
 }
+
+func Error(err error, ctx echo.Context) error {
+	return Response{Code: http.StatusBadRequest, Message: err}.JSON(ctx)
+}
+
+func Ok(ctx echo.Context) error {
+	return Response{Code: http.StatusOK}.JSON(ctx)
+}
+
+func Data(data interface{}, ctx echo.Context) error {
+	return Response{Code: http.StatusOK, Data: data}.JSON(ctx)
+}
+
+func Message(message interface{}, ctx echo.Context) error {
+	return Response{Code: http.StatusOK, Message: message}.JSON(ctx)
+}

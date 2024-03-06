@@ -1,13 +1,12 @@
 package controllers
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 	"github.com/lawyky/fx-admin/errors"
 	"github.com/lawyky/fx-admin/lib"
 	"github.com/lawyky/fx-admin/models/dto"
 	"github.com/lawyky/fx-admin/pkg/echox"
+	"net/http"
 )
 
 type CaptchaController struct {
