@@ -33,9 +33,11 @@ func NewSwaggerRoutes(
 
 // Setup swagger routes
 func (a SwaggerRoutes) Setup() {
-	docs.SwaggerInfo.Title = a.config.Name
-	docs.SwaggerInfo.Version = constants.Version
+	if a.config.Log.Development {
+		docs.SwaggerInfo.Title = a.config.Name
+		docs.SwaggerInfo.Version = constants.Version
 
-	a.logger.Zap.Info("Setting up swagger routes")
-	a.handler.Engine.GET("/swagger/*", echoSwagger.WrapHandler)
+		a.logger.Zap.Info("Setting up swagger routes")
+		a.handler.Engine.GET("/swagger/*", echoSwagger.WrapHandler)
+	}
 }

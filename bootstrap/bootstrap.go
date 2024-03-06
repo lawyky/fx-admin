@@ -76,8 +76,10 @@ func bootstrap(
 				fmt.Println("Application Started...")
 				fmt.Println(pkg.Green("Server run at:"))
 				fmt.Printf("-  Network: http://%s/ \r\n", listenAddress)
-				fmt.Println(pkg.Green("Swagger run at:"))
-				fmt.Printf("-  Network: http://%s/swagger/index.html \r\n", listenAddress)
+				if config.Log.Development {
+					fmt.Println(pkg.Green("Swagger run at:"))
+					fmt.Printf("-  Network: http://%s/swagger/index.html \r\n", listenAddress)
+				}
 				fmt.Println("Enter Ctrl + C Shutdown Server \r")
 				fmt.Println()
 			}()
